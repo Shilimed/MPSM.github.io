@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Choix de projet – Guerre Électronique</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      padding: 30px;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    .container {
+      max-width: 600px;
+      background: white;
+      padding: 20px;
+      margin: auto;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    select,
+    input,
+    button {
+      width: 100%;
+      padding: 8px;
+      margin-top: 8px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h2>Choix de projet – Guerre Électronique</h2>
+
+    <label>Choisir un projet :</label>
+    <select id="project">
+        <option value="">-- Sélectionner un projet --</option>
+        <option value="Projet 1">Projet 1 : Brouillage radio</option>
+        <option value="Projet 2">Projet 2 : Signaux radar</option>
+        <option value="Projet 3">Projet 3 : Surveillance du spectre</option>
+        <option value="Projet 4">Projet 4 : Anti-brouillage</option>
+        <option value="Projet 5">Projet 5 : Brouillage GPS</option>
+        <option value="Projet 6">Projet 6 : Classification des signaux</option>
+        <option value="Projet 7">Projet 7 : Système GE</option>
+        <option value="Projet 8">Projet 8 : Tromperie radar</option>
+        <option value="Projet 9">Projet 9 : Rôle stratégique</option>
+        <option value="Projet 10">Projet 10 : ESM</option>
+    </select>
+
+    <label>Étudiant 1 :</label>
+    <input type="text" id="s1" placeholder="Nom et Prénom">
+
+    <label>Étudiant 2 :</label>
+    <input type="text" id="s2" placeholder="Nom et Prénom">
+
+    <label>Étudiant 3 :</label>
+    <input type="text" id="s3" placeholder="Nom et Prénom">
+
+    <button onclick="valider()">Valider le choix</button>
+  </div>
+
+  <script>
+    function valider() {
+        let projet = document.getElementById("project").value;
+        let s1 = document.getElementById("s1").value;
+        let s2 = document.getElementById("s2").value;
+        let s3 = document.getElementById("s3").value;
+
+        if (!projet || !s1 || !s2 || !s3) {
+            alert("Veuillez remplir tous les champs !");
+            return;
+        }
+
+        // Sauvegarder le projet choisi (localStorage)
+        let projetsPris = JSON.parse(localStorage.getItem("projetsPris")) || [];
+        projetsPris.push(projet);
+        localStorage.setItem("projetsPris", JSON.stringify(projetsPris));
+
+        alert("Projet validé avec succès !");
+        location.reload();
+    }
+
+    // Masquer les projets déjà choisis
+    window.onload = function() {
+        let projetsPris = JSON.parse(localStorage.getItem("projetsPris")) || [];
+        let select = document.getElementById("project");
+
+        for (let i = select.options.length - 1; i >= 0; i--) {
+            if (projetsPris.includes(select.options[i].value)) {
+                select.remove(i);
+            }
+        }
+    };
+  </script>
+
+</body>
+
+</html>
