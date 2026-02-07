@@ -1,74 +1,81 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-  <meta charset="UTF-8">
-  <title>Choix de projet – Guerre Électronique</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
-      padding: 30px;
-    }
-
-    h2 {
-      text-align: center;
-    }
-
-    .container {
-      max-width: 600px;
-      background: white;
-      padding: 20px;
-      margin: auto;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    label {
-      font-weight: bold;
-    }
-
-    select,
-    input,
-    button {
-      width: 100%;
-      padding: 8px;
-      margin-top: 8px;
-      margin-bottom: 15px;
-    }
-
-    button {
-      background: #007bff;
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 5px;
-    }
-
-    button:hover {
-      background: #0056b3;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Choix de projet – Guerre Électronique</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            padding: 30px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+        }
+        select, input, button {
+            width: 100%;
+            padding: 8px;
+            margin-top: 8px;
+            margin-bottom: 15px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th {
+            background: #007bff;
+            color: white;
+            padding: 10px;
+        }
+        td {
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
 </head>
-
 <body>
 
-  <div class="container">
+<div class="container">
     <h2>Choix de projet – Guerre Électronique</h2>
 
     <label>Choisir un projet :</label>
     <select id="project">
         <option value="">-- Sélectionner un projet --</option>
-        <option value="Projet 1">Projet 1 : Brouillage radio</option>
-        <option value="Projet 2">Projet 2 : Signaux radar</option>
-        <option value="Projet 3">Projet 3 : Surveillance du spectre</option>
-        <option value="Projet 4">Projet 4 : Anti-brouillage</option>
-        <option value="Projet 5">Projet 5 : Brouillage GPS</option>
-        <option value="Projet 6">Projet 6 : Classification des signaux</option>
-        <option value="Projet 7">Projet 7 : Système GE</option>
-        <option value="Projet 8">Projet 8 : Tromperie radar</option>
-        <option value="Projet 9">Projet 9 : Rôle stratégique</option>
-        <option value="Projet 10">Projet 10 : ESM</option>
+        <option value="Projet 1 : Brouillage radio">Projet 1 : Brouillage radio</option>
+        <option value="Projet 2 : Signaux radar">Projet 2 : Signaux radar</option>
+        <option value="Projet 3 : Surveillance du spectre">Projet 3 : Surveillance du spectre</option>
+        <option value="Projet 4 : Anti-brouillage">Projet 4 : Anti-brouillage</option>
+        <option value="Projet 5 : Brouillage GPS">Projet 5 : Brouillage GPS</option>
+        <option value="Projet 6 : Classification des signaux">Projet 6 : Classification des signaux</option>
+        <option value="Projet 7 : Système GE">Projet 7 : Système GE</option>
+        <option value="Projet 8 : Tromperie radar">Projet 8 : Tromperie radar</option>
+        <option value="Projet 9 : Rôle stratégique">Projet 9 : Rôle stratégique</option>
+        <option value="Projet 10 : ESM">Projet 10 : ESM</option>
     </select>
 
     <label>Étudiant 1 :</label>
@@ -81,9 +88,22 @@
     <input type="text" id="s3" placeholder="Nom et Prénom">
 
     <button onclick="valider()">Valider le choix</button>
-  </div>
 
-  <script>
+    <!-- TABLEAU -->
+    <table id="resultTable" style="display:none;">
+        <thead>
+            <tr>
+                <th>Projet choisi</th>
+                <th>Étudiant 1</th>
+                <th>Étudiant 2</th>
+                <th>Étudiant 3</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+</div>
+
+<script>
     function valider() {
         let projet = document.getElementById("project").value;
         let s1 = document.getElementById("s1").value;
@@ -95,17 +115,40 @@
             return;
         }
 
-        // Sauvegarder le projet choisi (localStorage)
+        // Sauvegarde dans localStorage
+        let data = JSON.parse(localStorage.getItem("groupes")) || [];
+        data.push({ projet, s1, s2, s3 });
+        localStorage.setItem("groupes", JSON.stringify(data));
+
+        // Masquer le projet choisi
         let projetsPris = JSON.parse(localStorage.getItem("projetsPris")) || [];
         projetsPris.push(projet);
         localStorage.setItem("projetsPris", JSON.stringify(projetsPris));
 
-        alert("Projet validé avec succès !");
-        location.reload();
+        afficherTableau();
+        supprimerProjetsPris();
+        resetForm();
     }
 
-    // Masquer les projets déjà choisis
-    window.onload = function() {
+    function afficherTableau() {
+        let data = JSON.parse(localStorage.getItem("groupes")) || [];
+        let tbody = document.getElementById("tableBody");
+        tbody.innerHTML = "";
+
+        data.forEach(g => {
+            let row = `<tr>
+                <td>${g.projet}</td>
+                <td>${g.s1}</td>
+                <td>${g.s2}</td>
+                <td>${g.s3}</td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+
+        document.getElementById("resultTable").style.display = "table";
+    }
+
+    function supprimerProjetsPris() {
         let projetsPris = JSON.parse(localStorage.getItem("projetsPris")) || [];
         let select = document.getElementById("project");
 
@@ -114,9 +157,19 @@
                 select.remove(i);
             }
         }
+    }
+
+    function resetForm() {
+        document.getElementById("s1").value = "";
+        document.getElementById("s2").value = "";
+        document.getElementById("s3").value = "";
+    }
+
+    window.onload = function () {
+        afficherTableau();
+        supprimerProjetsPris();
     };
-  </script>
+</script>
 
 </body>
-
 </html>
