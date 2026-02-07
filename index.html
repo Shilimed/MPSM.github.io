@@ -263,57 +263,20 @@
 
 <script>
 const projets = [
-    {
-        id: 1, 
-        title: "Projet 1 : Étude et simulation du brouillage d’une liaison radio", 
-        desc: "Analyse des principes fondamentaux du brouillage intentionnel des communications radio et simulation de son impact sur les performances d’une liaison (rapport signal sur bruit, taux d’erreur binaire)."
-    },
-    {
-        id: 2, 
-        title: "Projet 2 : Identification et analyse des signaux radar", 
-        desc: "Étude des caractéristiques temporelles et fréquentielles des signaux radar et mise en œuvre d’une méthode simple d’identification et de reconnaissance."
-    },
-    {
-        id: 3, 
-        title: "Projet 3 : Étude du rôle de la guerre électronique dans la défense aérienne", 
-        desc: "Analyse documentaire et simulation de scénarios où la GE permet la protection de zones aériennes stratégiques."
-    },
-    {
-        id: 4, 
-        title: "Projet 4 : Techniques de protection électronique contre le brouillage", 
-        desc: "Étude comparative des principales techniques de protection électronique, telles que le saut de fréquence et l’étalement de spectre, appliquées aux systèmes de communication."
-    },
-    {
-        id: 5, 
-        title: "Projet 5 : Analyse des effets du brouillage GPS sur les systèmes de navigation", 
-        desc: "Étude du fonctionnement du système GPS et analyse des conséquences du brouillage sur la précision et la fiabilité du positionnement."
-    },
-    {
-        id: 6, 
-        title: "Projet 6 : Classification automatique des signaux électromagnétiques", 
-        desc: "Extraction de paramètres caractéristiques des signaux et proposition d’une méthode simple de classification (signaux de communication, signaux radar, bruit)."
-    },
-    {
-        id: 7, 
-        title: "Projet 7 : Conception fonctionnelle d’un système de guerre électronique", 
-        desc: "Modélisation de l’architecture fonctionnelle d’un système de guerre électronique intégrant les phases de détection, d’analyse et de contre-mesures."
-    },
-    {
-        id: 8, 
-        title: "Projet 8 : Analyse des brouillages numériques en communication Wi-Fi", 
-        desc: "Identification et simulation de différents types de brouillage sur les réseaux Wi-Fi, avec mesure de l’impact sur le débit et la qualité de service."
-    },
-    {
-        id: 9, 
-        title: "Projet 9 : Rôle stratégique de la guerre électronique dans les systèmes militaires modernes", 
-        desc: "Analyse documentaire mettant en évidence l’importance stratégique de la guerre électronique dans les opérations militaires contemporaines."
-    },
-    {
-        id: 10, 
-        title: "Projet 10 : Mesures de soutien électronique (ESM) pour la détection des menaces", 
-        desc: "Étude des principes des mesures de soutien électronique (ESM) et application à la surveillance et à l’identification des émissions électromagnétiques."
-    }
+    { id: 1, title: "Projet 1 : Étude et simulation du brouillage d’une liaison radio", desc: "Analyse des principes fondamentaux du brouillage intentionnel des communications radio et simulation de son impact." },
+    { id: 2, title: "Projet 2 : Identification et analyse des signaux radar", desc: "Étude des caractéristiques temporelles et fréquentielles des signaux radar." },
+    { id: 3, title: "Projet 3 : Étude du rôle de la guerre électronique dans la défense aérienne", desc: "Analyse documentaire et simulation de scénarios de protection aérienne." },
+    { id: 4, title: "Projet 4 : Techniques de protection électronique contre le brouillage", desc: "Étude comparative du saut de fréquence et de l’étalement de spectre." },
+    { id: 5, title: "Projet 5 : Analyse des effets du brouillage GPS sur les systèmes de navigation", desc: "Étude du fonctionnement GPS et conséquences du brouillage sur la précision." },
+    { id: 6, title: "Projet 6 : Classification automatique des signaux électromagnétiques", desc: "Extraction de paramètres et méthode simple de classification." },
+    { id: 7, title: "Projet 7 : Conception fonctionnelle d’un système de guerre électronique", desc: "Modélisation des phases de détection, d’analyse et de contre-mesures." },
+    { id: 8, title: "Projet 8 : Analyse des brouillages numériques en communication Wi-Fi", desc: "Identification et simulation de brouillage sur les réseaux Wi-Fi." },
+    { id: 9, title: "Projet 9 : Rôle stratégique de la guerre électronique dans les systèmes militaires modernes", desc: "Analyse stratégique de la GE dans les opérations contemporaines." },
+    { id: 10, title: "Projet 10 : Mesures de soutien électronique (ESM) pour la détection des menaces", desc: "Étude des principes ESM pour la surveillance et l’identification." }
 ];
+
+// --- LOGIQUE DE STOCKAGE ---
+const DB_NAME = "GE_FINAL_DB";
 
 function showDialog(title, msg, isSuccess) {
     const modal = document.getElementById("modalOverlay");
@@ -328,15 +291,20 @@ function showDialog(title, msg, isSuccess) {
 function closeModal() { document.getElementById("modalOverlay").style.display = "none"; }
 
 function init() {
-    const data = JSON.parse(localStorage.getItem("GE_FINAL_DB")) || {};
+    // Charger les données proprement
+    const storedData = localStorage.getItem(DB_NAME);
+    const data = storedData ? JSON.parse(storedData) : {};
+    
     const select = document.getElementById("projectSelect");
     const tbody = document.getElementById("tableBody");
     
-    select.innerHTML = '<option value="">-- Sélectionnez un thème --</option>';
+    select.innerHTML = '<option value="">-- Sélectionnez un thème libre --</option>';
     tbody.innerHTML = '';
 
     projets.forEach(p => {
         const group = data[p.id];
+        
+        // Ajouter au menu déroulant seulement si LIBRE
         if(!group) {
             let opt = document.createElement("option");
             opt.value = p.id;
@@ -344,14 +312,15 @@ function init() {
             select.appendChild(opt);
         }
 
+        // Ajouter à la table
         tbody.innerHTML += `
             <tr>
                 <td data-label="Thématique"><span class="project-title">${p.title}</span></td>
                 <td data-label="Description">${p.desc}</td>
-                <td data-label="Membres">${group ? group.join("<br>") : '—'}</td>
+                <td data-label="Membres">${group ? group.join("<br>") : '<i style="color:#cbd5e1">En attente...</i>'}</td>
                 <td data-label="Statut">
                     <span class="badge ${group ? 'badge-busy' : 'badge-free'}">
-                        ${group ? 'OCCUPÉ' : 'LIBRE'}
+                        ${group ? 'OCCUPÉ' : 'DISPONIBLE'}
                     </span>
                 </td>
             </tr>
@@ -365,21 +334,37 @@ function valider() {
     const s3 = document.getElementById("s3").value.trim();
     const pid = document.getElementById("projectSelect").value;
 
+    // Vérification des champs
     if(!s1 || !s2 || !s3 || !pid) {
-        showDialog("Oups !", "Veuillez remplir les 3 noms et choisir un projet.", false);
+        showDialog("Champs manquants", "Veuillez saisir les 3 noms et choisir un projet.", false);
         return;
     }
 
-    const data = JSON.parse(localStorage.getItem("GE_FINAL_DB")) || {};
-    data[pid] = [s1, s2, s3];
-    localStorage.setItem("GE_FINAL_DB", JSON.stringify(data));
+    // Récupérer la base actuelle
+    const data = JSON.parse(localStorage.getItem(DB_NAME)) || {};
 
-    document.querySelectorAll("input").forEach(i => i.value = "");
+    // Vérifier si le projet n'a pas été pris entre temps
+    if(data[pid]) {
+        showDialog("Erreur", "Ce projet vient d'être réservé par un autre groupe.", false);
+        init();
+        return;
+    }
+
+    // Enregistrement
+    data[pid] = [s1, s2, s3];
+    localStorage.setItem(DB_NAME, JSON.stringify(data));
+
+    // Reset formulaire
+    document.getElementById("s1").value = "";
+    document.getElementById("s2").value = "";
+    document.getElementById("s3").value = "";
+    
     init();
-    showDialog("C'est enregistré !", "L'inscription de votre trinôme a été validée avec succès.", true);
+    showDialog("Félicitations !", "Votre trinôme est bien inscrit pour ce projet.", true);
 }
 
 window.onload = init;
 </script>
+
 </body>
 </html>
